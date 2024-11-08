@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Wallet</string>
+
+    <string name="email_label_text_field">"Email"</string>
+    <string name="password_label_text_field">"Contraseña"</string>
+    <string name="verify_password_label_text_field">"Confirmar Contraseña"</string>
+    <string name="login">"Iniciar Sesión"</string>
+    <string name="text_without_acount">"¿No tienes cuenta? Regístrate"</string>
+
+    <string name="first_name_label_text_field">"Nombre"</string>
+    <string name="last_name_label_text_field">"Apellido"</string>
+    <string name="create_user">"Crear Usuario"</string>
+
+    <string name="title_income">"Ingresos"</string>
+    <string name="title_expenses">"Egresos"</string>
+    <string name="title_home">"Inicio"</string>
+    <string name="your_income">Tus Ingresos</string>
+    <string name="recent_transactions">"Transacciones Recientes"</string>
+
+    <string name="title_transaction">Transacciones</string>
+    <string name="add_transaction">Agregar</string>
+    <string name="edit_transaction">Editar</string>
+    <string name="description">Descripción</string>
+    <string name="amount">Monto</string>
+    <string name="complete_description">Completa la Descripción</string>
+    <string name="complete_amount">Completa el Monto</string>
+    <string name="complete_type_of_transaction">Completa el Tipo de Transacción</string>
+    <string name="empty">""</string>
+    <string name="date">Fecha</string>
+    <string name="category">Categoría</string>
+    <string name="title_setting">Ajustes</string>
+    <string name="title_categories">Categorías</string>
+    <string name="wishDeleteTransaction">"¿Desea eliminar la transacción?"</string>
+    <string name="history">Historial</string>
+    <string name="reuse">Guardados</string>
+    <string name="try_again">Error: Intenta Nuevamente</string>
+    <string name="new_transaction">Nueva Transacción</string>
+    <string name="saludo">Hola,</string>
+    <string name="color">Color</string>
+    <string name="complete_category">Completa la Categoria</string>
+    <string name="wishDeleteCategory">¿Desea eliminar la categoria?</string>
+    <string name="category_usada">Esta categoria esta en uso</string>
+    <string name="limit_here">Limite alcanzado</string>
+
+
+</resources>
