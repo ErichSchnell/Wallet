@@ -62,3 +62,33 @@ fun List<TransactionModelUI>.mapWithCategory(categorySelected: CategoryUi): List
     }
     return tr
 }
+
+
+fun List<TransactionModelUI>.getWeek(numberOfWeek: Int): List<TransactionModelUI> {
+    return when(numberOfWeek){
+        1 -> {
+            this.mapNotNull { transaction ->
+                val date = transaction.date.getDayOfMonth() ?: 8
+                if (date <= 7) transaction else null
+            }
+        }
+        2 -> {
+            this.mapNotNull { transaction ->
+                val date = transaction.date.getDayOfMonth() ?: 0
+                if (date > 7 && date <= 14) transaction else null
+            }
+        }
+        3 -> {
+            this.mapNotNull { transaction ->
+                val date = transaction.date.getDayOfMonth() ?: 0
+                if (date > 14 && date <= 21) transaction else null
+            }
+        }
+        else -> {
+            this.mapNotNull { transaction ->
+                val date = transaction.date.getDayOfMonth() ?: 0
+                if (date > 21 && date <= 31) transaction else null
+            }
+        }
+    }
+}

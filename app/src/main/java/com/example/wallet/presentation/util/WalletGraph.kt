@@ -1,5 +1,7 @@
 package com.example.wallet.presentation.util
 
+import android.text.TextPaint
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -23,6 +25,8 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -121,6 +125,116 @@ fun WalletResumeChartGraph(
 
 }
 
+
+@Composable
+fun GraficoByWeek(
+    title: String,
+    transactions: List<TransactionModelUI>,
+) {
+    val tr = transactions.map { it.copy(amount = abs(it.amount)) }
+    val week1 = tr.getWeek(1)
+    val week2 = tr.getWeek(2)
+    val week3 = tr.getWeek(3)
+    val week4 = tr.getWeek(4)
+    Log.i("TAG ERICH", "week1: $week1")
+    Log.i("TAG ERICH", "week2: $week2")
+    Log.i("TAG ERICH", "week3: $week3")
+    Log.i("TAG ERICH", "week4: $week4")
+
+    val weeks = listOf(week1,week2,week3,week4)
+    val weeksAmount = listOf(week1.sumOf { it.amount },week2.sumOf { it.amount },week3.sumOf { it.amount },week4.sumOf { it.amount })
+    Log.i("TAG ERICH", "weeksAmount: $weeksAmount")
+
+    val maxAmount = weeksAmount.max().toFloat()
+
+    CardWallet(height = 300.dp) {
+        Column(
+            Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = title)
+
+            Row(
+                Modifier
+                    .padding(16.dp)
+                    .weight(1f)
+                    .fillMaxWidth()) {
+                Column(modifier = Modifier
+                    .fillMaxHeight()
+                    .wrapContentWidth(), horizontalAlignment = Alignment.End) {
+                    Text(text = "$$maxAmount")
+                    Spacer(Modifier.weight(1f))
+                    Text(text = "$0")
+                }
+                Canvas(modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()) {
+
+                    val textPaint = TextPaint().apply {
+                        color = Color.White.toArgb() // Color del texto
+                        textSize = 12.sp.toPx()      // Tamaño del texto
+                        isAntiAlias = true           // Para bordes más suaves
+                    }
+
+
+
+                    val width = size.width * 0.85f
+                    val xStep = width / 4
+                    val yStep = size.height / maxAmount
+
+
+                    val widthStartBars = (size.width - width) / 2f
+                    val widthStartGuide = (size.width - width) / 2f
+
+                    weeks.forEachIndexed { index, week ->
+
+                        val xPos = index * xStep
+                        var yPre = size.height
+
+                        week.forEach {  tr ->
+                            val amount = tr.amount.toFloat()
+                            val yPos = yPre - (amount * yStep)
+
+                            drawLine(
+                                color = tr.category.color,
+                                start = Offset(xPos + widthStartBars + xStep, yPre),
+                                end = Offset(xPos + widthStartBars + xStep, yPos),
+                                strokeWidth = xStep * .75f
+                            )
+
+                            yPre = yPos
+                        }
+
+                        drawContext.canvas.nativeCanvas.drawText(
+                            "s°${index + 1}",
+                            xPos + widthStartBars + xStep - 16,
+                            size.height,
+                            textPaint
+                        )
+
+                    }
+
+
+                    val path = Path()
+                    path.moveTo(widthStartGuide, 0f)
+                    path.lineTo(widthStartGuide, size.height)
+                    path.moveTo(widthStartGuide, size.height)
+                    path.lineTo(size.width, size.height)
+                    drawPath(
+                        path = path,
+                        color = Color.White.copy(alpha = 0.5f),
+                        style = Stroke(width = 1.dp.toPx())
+                    )
+                }
+            }
+        }
+
+    }
+}
+
+
+
+
 @Composable
 fun GraficoAcumulado(transaction: List<TransactionModelUI>) {
     var amount = .0
@@ -130,6 +244,7 @@ fun GraficoAcumulado(transaction: List<TransactionModelUI>) {
     }
     GraficoTransacciones(title = "Transactions Acumuladas", transactions = transactionAcumulado)
 }
+
 @Composable
 fun GraficoTransacciones(
     title: String,

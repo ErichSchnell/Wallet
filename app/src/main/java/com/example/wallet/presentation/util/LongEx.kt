@@ -3,9 +3,13 @@ package com.example.wallet.presentation.util
 import com.google.firebase.Timestamp
 import java.lang.Exception
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 
 fun Long?.millisToDate():String{
@@ -47,4 +51,13 @@ fun Long.nextMonht(): Long{
     calendar.add(Calendar.MONTH, 1) // Suma o resta meses
 
     return calendar.time.time
+}
+
+
+fun Long?.getDayOfMonth(): Int? {
+    this ?: return null
+
+    val calendar = Calendar.getInstance(TimeZone.getDefault())
+    calendar.timeInMillis = this
+    return calendar.get(Calendar.DAY_OF_MONTH)
 }
