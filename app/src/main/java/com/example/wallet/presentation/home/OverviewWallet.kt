@@ -58,7 +58,7 @@ fun OverviewWallet(
             onClickPreviousMonth = onClickPreviousMonth,
             onClickNextMonth = onClickNextMonth
         )
-        Column(Modifier.fillMaxWidth().weight(1f).padding(top = topPadding).verticalScroll(scrollState)) {
+        Column(Modifier.fillMaxWidth().weight(1f).verticalScroll(scrollState)) {
             if (transaction.isNotEmpty()) {
 
                 TransactionsPointsGraph(transactionWallet = transaction.reversed(), amount = detailsScreen.categories[0].amount)
@@ -156,29 +156,20 @@ fun ItemTrackTransactionPercent(
     progressColor: Color,
 ) {
     val percent:Int = (progress * 100f).toInt()
-    Row (
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Box(modifier = Modifier.weight(1f).height(50.dp), contentAlignment = Alignment.Center) {
-            LinearProgressIndicator(
-                modifier = Modifier.fillMaxSize().clip(CircleShape),
-                progress = { 0f },
-                trackColor = progressColor,
-            )
-            LinearProgressIndicator(
-                modifier = Modifier.padding(8.dp).fillMaxSize().clip(CircleShape),
-                progress = { progress },
-                color = backgroundColor,
-                trackColor = progressColor,
-            )
-        }
-
-        Spacer(Modifier.width(16.dp))
-        Text(text = "$percent%")
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        LinearProgressIndicator(
+            modifier = Modifier.fillMaxSize().clip(CircleShape),
+            progress = { 0f },
+            trackColor = progressColor,
+        )
+        LinearProgressIndicator(
+            modifier = Modifier.padding(8.dp).fillMaxSize().clip(CircleShape),
+            progress = { progress },
+            color = backgroundColor,
+            trackColor = progressColor,
+        )
+        Text(text = "$percent%", color = Color.Black)
     }
-
 }
 
 
