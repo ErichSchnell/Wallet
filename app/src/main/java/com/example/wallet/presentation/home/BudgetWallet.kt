@@ -36,6 +36,7 @@ import com.example.wallet.presentation.model.CategoryUi
 import com.example.wallet.presentation.model.DetailsScreen
 import com.example.wallet.presentation.util.CalendarFilter
 import com.example.wallet.presentation.util.CardWallet
+import com.example.wallet.presentation.util.GraficoByDay
 import com.example.wallet.presentation.util.GraficoByWeek
 import com.example.wallet.presentation.util.GraficoTransacciones
 import com.example.wallet.presentation.util.WalletCategoryGraph
@@ -81,12 +82,14 @@ fun BudgetWallet(
 
                 GraficoByWeek("SemanasDelMes x Monto", transaction)
 
-                TransactionsPointsGraph(
-                    transactionWallet = transaction,
-                    amount = detailsScreen.categories[0].amount
-                )
+                GraficoByDay("DiasDelMes x Monto", transaction)
 
-                GraficoTransacciones(title = "Transactions", transactions = transaction)
+//                TransactionsPointsGraph(
+//                    transactionWallet = transaction,
+//                    amount = detailsScreen.categories[0].amount
+//                )
+//
+//                GraficoTransacciones(title = "Transactions", transactions = transaction)
             }
 
             Box(

@@ -136,14 +136,9 @@ fun GraficoByWeek(
     val week2 = tr.getWeek(2)
     val week3 = tr.getWeek(3)
     val week4 = tr.getWeek(4)
-    Log.i("TAG ERICH", "week1: $week1")
-    Log.i("TAG ERICH", "week2: $week2")
-    Log.i("TAG ERICH", "week3: $week3")
-    Log.i("TAG ERICH", "week4: $week4")
 
     val weeks = listOf(week1,week2,week3,week4)
     val weeksAmount = listOf(week1.sumOf { it.amount },week2.sumOf { it.amount },week3.sumOf { it.amount },week4.sumOf { it.amount })
-    Log.i("TAG ERICH", "weeksAmount: $weeksAmount")
 
     val maxAmount = weeksAmount.max().toFloat()
 
@@ -212,6 +207,113 @@ fun GraficoByWeek(
                             textPaint
                         )
 
+                    }
+
+
+                    val path = Path()
+                    path.moveTo(widthStartGuide, 0f)
+                    path.lineTo(widthStartGuide, size.height)
+                    path.moveTo(widthStartGuide, size.height)
+                    path.lineTo(size.width, size.height)
+                    drawPath(
+                        path = path,
+                        color = Color.White.copy(alpha = 0.5f),
+                        style = Stroke(width = 1.dp.toPx())
+                    )
+                }
+            }
+        }
+
+    }
+}
+
+@Composable
+fun GraficoByDay(
+    title: String,
+    transactions: List<TransactionModelUI>,
+) {
+    val tr = transactions.map { it.copy(amount = abs(it.amount)) }
+
+    val days = mutableListOf<List<TransactionModelUI>>()
+    val daysAmount = mutableListOf<Double>()
+    val lastDayOfMonth = tr.last().date.getDayOfMonth() ?: 31
+    for (i in 1 .. lastDayOfMonth){
+        val day = tr.getDay(i)
+        if (day.isNotEmpty()){
+            days.add(day)
+            daysAmount.add(day.sumOf { it.amount })
+        }
+    }
+
+    val maxAmount = daysAmount.max().toFloat()
+
+    CardWallet(height = 300.dp) {
+        Column(
+            Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = title)
+
+            Row(
+                Modifier
+                    .padding(16.dp)
+                    .weight(1f)
+                    .fillMaxWidth()) {
+                Column(modifier = Modifier
+                    .fillMaxHeight()
+                    .wrapContentWidth(), horizontalAlignment = Alignment.End) {
+                    Text(text = "$$maxAmount")
+                    Spacer(Modifier.weight(1f))
+                    Text(text = "$0")
+                }
+                Canvas(modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()) {
+
+                    val textPaint = TextPaint().apply {
+                        color = Color.White.toArgb() // Color del texto
+                        textSize = 8.sp.toPx()      // Tamaño del texto
+                        isAntiAlias = true           // Para bordes más suaves
+                    }
+
+                    val width = size.width * 0.85f
+
+                    val daysWithTransactions = days.mapNotNull { if (it.isNotEmpty()) it else null }.count()
+                    Log.i("TAG ERICH", "days: $days")
+                    Log.i("TAG ERICH", "days.mapNotNull { if (it.isNotEmpty()) it else null }: ${days.mapNotNull { if (it.isNotEmpty()) it else null }}")
+                    Log.i("TAG ERICH", "days.mapNotNull { if (it.isNotEmpty()) it else null }.count(): ${days.mapNotNull { if (it.isNotEmpty()) it else null }.count()}")
+                    val xStep = width / daysWithTransactions
+                    val yStep = size.height / maxAmount
+
+
+                    val widthStartBars = (size.width - width) / 2f
+                    val widthStartGuide = (size.width - width) / 2f
+
+                    days.forEachIndexed { index, day ->
+
+                        val xPos = index * xStep
+                        var yPre = size.height
+
+                        day.forEach {  tr ->
+                            val amount = tr.amount.toFloat()
+                            val yPos = yPre - (amount * yStep)
+
+                            drawLine(
+                                color = tr.category.color,
+                                start = Offset(xPos + widthStartBars + xStep, yPre),
+                                end = Offset(xPos + widthStartBars + xStep, yPos),
+                                strokeWidth = xStep * .75f
+                            )
+
+                            yPre = yPos
+                        }
+
+                        drawContext.canvas.nativeCanvas.drawText(
+                            "${day.first().date.getDayOfMonth()}",
+                            xPos + widthStartBars + xStep - 16,
+                            size.height,
+                            textPaint
+                        )
                     }
 
 

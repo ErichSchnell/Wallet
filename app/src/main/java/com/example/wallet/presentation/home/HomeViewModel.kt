@@ -256,16 +256,11 @@ class HomeViewModel @Inject constructor(
     fun previousMonth() {
         val index = _uiState.value.monthList.indexOf(_uiState.value.dateSelected)
 
-        Log.i("TAG ERICH", "index: $index")
         when{
             index == 0 -> {
-                Log.i("TAG ERICH", "_uiState.value.dateSelected: ${_uiState.value.dateSelected}")
                 _uiState.update { it.copy(toastText = R.string.limit_here) }
             }
             index > 0 -> {
-                Log.i("TAG ERICH", "_uiState.value.dateSelected: ${_uiState.value.dateSelected}")
-                Log.i("TAG ERICH", "_uiState.value.monthList[$index]: ${_uiState.value.monthList[index]}")
-                Log.i("TAG ERICH", "_uiState.value.monthList[${index-1}]: ${_uiState.value.monthList[index - 1]}")
                 _uiState.update { it.copy( dateSelected = _uiState.value.monthList[index - 1]) }
                 _uiState.updateTransactions()
             }
@@ -279,16 +274,11 @@ class HomeViewModel @Inject constructor(
     fun nextMonth() {
         val index = _uiState.value.monthList.indexOf(_uiState.value.dateSelected)
 
-        Log.i("TAG ERICH", "index: $index")
         when{
             index == (uiState.value.monthList.size - 1) -> {
-                Log.i("TAG ERICH", "_uiState.value.dateSelected: ${_uiState.value.dateSelected}")
                 _uiState.update { it.copy(toastText = R.string.limit_here) }
             }
             index < (uiState.value.monthList.size - 1) -> {
-                Log.i("TAG ERICH", "_uiState.value.dateSelected: ${_uiState.value.dateSelected}")
-                Log.i("TAG ERICH", "_uiState.value.monthList[$index]: ${_uiState.value.monthList[index]}")
-                Log.i("TAG ERICH", "_uiState.value.monthList[${index + 1}]: ${_uiState.value.monthList[index + 1]}")
                 _uiState.update { it.copy( dateSelected = _uiState.value.monthList[index + 1]) }
                 _uiState.updateTransactions()
             }

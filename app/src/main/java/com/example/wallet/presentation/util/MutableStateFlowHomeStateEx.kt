@@ -21,7 +21,6 @@ fun MutableStateFlow<HomeUIState>.updateDate(){
     val monthsUsed = this.value.allTransactions.reversed().mapNotNull { it.date?.getMonthAndYearString() }.distinct()
     val monthSelected = monthsUsed.find { it == this.value.dateSelected }
 
-    Log.i("TAG ERICH", "monthsUsed: $monthsUsed")
     Log.i("TAG ERICH", "monthSelected: $monthSelected")
 
     if (monthSelected != null){

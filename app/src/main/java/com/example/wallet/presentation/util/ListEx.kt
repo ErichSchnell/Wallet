@@ -92,3 +92,8 @@ fun List<TransactionModelUI>.getWeek(numberOfWeek: Int): List<TransactionModelUI
         }
     }
 }
+
+
+fun List<TransactionModelUI>.getDay(numberOfWeek: Int): List<TransactionModelUI> {
+    return this.mapNotNull { tr -> if (tr.date.getDayOfMonth() == numberOfWeek) tr else null }
+}
