@@ -1,5 +1,6 @@
 package com.example.wallet.presentation.util
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import com.example.wallet.presentation.model.CategoryUi
 import com.example.wallet.presentation.model.TransactionModelUI
@@ -46,10 +47,10 @@ fun List<TransactionModelUI>.getCategories(categories: List<CategoryUi>?): List<
     }
 }
 
-fun List<TransactionModelUI>.mapWithDate(date: Long?): List<TransactionModelUI>{
+fun List<TransactionModelUI>.mapWithDate(date: String?): List<TransactionModelUI>{
     date ?: return this
     return this.mapNotNull { tr ->
-        if (tr.date?.getMonthAndYearString() == date.getMonthAndYearString()) tr
+        if (tr.date?.getMonthAndYearString() == date) tr
         else null
     }
 }

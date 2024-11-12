@@ -198,7 +198,6 @@ class HomeViewModel @Inject constructor(
     }
 
     fun addCategory(category: CategoryUi) {
-        Log.i("TAG ERICH", "add new category: addCategory ")
         viewModelScope.launch {
             withContext(Dispatchers.IO){
 
@@ -206,9 +205,7 @@ class HomeViewModel @Inject constructor(
                 val profile = _uiState.getProfileWithNewCategory(category)
                 if (profile != null){
 
-                    Log.i("TAG ERICH", "add new category: setProfile(_uiState.value.user.email, profile) antes ")
                     val result = setProfile(_uiState.value.user.email, profile)
-                    Log.i("TAG ERICH", "add new category: setProfile(_uiState.value.user.email, profile) despues ")
 
                     if (result){
                         getProfiles(profile)
@@ -257,36 +254,49 @@ class HomeViewModel @Inject constructor(
     }
 
     fun previousMonth() {
-        val firstDate = _uiState.value.allTransactions.last().date?.getMonthAndYearString() ?: return
-        val selectedCalendar = _uiState.value.dateSelected
+        val index = _uiState.value.monthList.indexOf(_uiState.value.dateSelected)
 
-        selectedCalendar?.let {
-            if (selectedCalendar.getMonthAndYearString() == firstDate){
+        Log.i("TAG ERICH", "index: $index")
+        when{
+            index == 0 -> {
+                Log.i("TAG ERICH", "_uiState.value.dateSelected: ${_uiState.value.dateSelected}")
                 _uiState.update { it.copy(toastText = R.string.limit_here) }
-                return
+            }
+            index > 0 -> {
+                Log.i("TAG ERICH", "_uiState.value.dateSelected: ${_uiState.value.dateSelected}")
+                Log.i("TAG ERICH", "_uiState.value.monthList[$index]: ${_uiState.value.monthList[index]}")
+                Log.i("TAG ERICH", "_uiState.value.monthList[${index-1}]: ${_uiState.value.monthList[index - 1]}")
+                _uiState.update { it.copy( dateSelected = _uiState.value.monthList[index - 1]) }
+                _uiState.updateTransactions()
+            }
+            else -> {
+                _uiState.update { it.copy( dateSelected = _uiState.value.monthList.last()) }
+                _uiState.updateTransactions()
             }
         }
-
-        Log.i("TAG ERICH", "selectedCalendar.previousMonht() ${selectedCalendar?.previousMonht()}")
-        _uiState.update { it.copy( dateSelected = selectedCalendar?.previousMonht()) }
-        _uiState.updateTransactions()
     }
 
     fun nextMonth() {
-        val lastDate = _uiState.value.allTransactions.first().date?.getMonthAndYearString() ?: return
-        val selectedCalendar = _uiState.value.dateSelected
+        val index = _uiState.value.monthList.indexOf(_uiState.value.dateSelected)
 
-        selectedCalendar?.let {
-            if (selectedCalendar.getMonthAndYearString() == lastDate){
-                Log.i("TAG ERICH", "selectedCalendar >= lastDate: selectedCalendar $selectedCalendar")
-                Log.i("TAG ERICH", "selectedCalendar >= lastDate: lastDate $lastDate")
+        Log.i("TAG ERICH", "index: $index")
+        when{
+            index == (uiState.value.monthList.size - 1) -> {
+                Log.i("TAG ERICH", "_uiState.value.dateSelected: ${_uiState.value.dateSelected}")
                 _uiState.update { it.copy(toastText = R.string.limit_here) }
-                return
+            }
+            index < (uiState.value.monthList.size - 1) -> {
+                Log.i("TAG ERICH", "_uiState.value.dateSelected: ${_uiState.value.dateSelected}")
+                Log.i("TAG ERICH", "_uiState.value.monthList[$index]: ${_uiState.value.monthList[index]}")
+                Log.i("TAG ERICH", "_uiState.value.monthList[${index + 1}]: ${_uiState.value.monthList[index + 1]}")
+                _uiState.update { it.copy( dateSelected = _uiState.value.monthList[index + 1]) }
+                _uiState.updateTransactions()
+            }
+            else -> {
+                _uiState.update { it.copy( dateSelected = _uiState.value.monthList.last()) }
+                _uiState.updateTransactions()
             }
         }
-        Log.i("TAG ERICH", "selectedCalendar.nextMonht() ${selectedCalendar?.nextMonht()}")
-        _uiState.update { it.copy( dateSelected = selectedCalendar?.nextMonht()) }
-        _uiState.updateTransactions()
     }
 }
 
@@ -295,7 +305,8 @@ data class HomeUIState(
 
     val screens: Screens = Screens.OVERVIEW,
 
-    val dateSelected: Long? = null,
+    val dateSelected: String? = null,
+    val monthList: List<String> = emptyList(),
 
     val user: UserModelUI = UserModelUI(),
     val profiles: List<ProfileModelUi> = emptyList(),

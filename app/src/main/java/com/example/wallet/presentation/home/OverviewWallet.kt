@@ -52,30 +52,31 @@ fun OverviewWallet(
         Modifier
             .fillMaxSize()
             .padding(top = topPadding)
-            .verticalScroll(scrollState)
     ) {
-        if (transaction.isNotEmpty()) {
-            CalendarFilter(
-                date = dateSelected,
-                onClickPreviousMonth = onClickPreviousMonth,
-                onClickNextMonth = onClickNextMonth
-            )
-            Spacer(Modifier.height(16.dp))
+        CalendarFilter(
+            date = dateSelected,
+            onClickPreviousMonth = onClickPreviousMonth,
+            onClickNextMonth = onClickNextMonth
+        )
+        Column(Modifier.fillMaxWidth().weight(1f).padding(top = topPadding).verticalScroll(scrollState)) {
+            if (transaction.isNotEmpty()) {
 
-            TransactionsPointsGraph(transactionWallet = transaction.reversed(), amount = detailsScreen.categories[0].amount)
+                TransactionsPointsGraph(transactionWallet = transaction.reversed(), amount = detailsScreen.categories[0].amount)
 
-            ResumeTransactionsPercent(
-                amountIncome = detailsScreenIncome.categories[0].amount.toFloat(),
-                amountExpenses = detailsScreenExpenses.categories[0].amount.toFloat(),
-            )
+                ResumeTransactionsPercent(
+                    amountIncome = detailsScreenIncome.categories[0].amount.toFloat(),
+                    amountExpenses = detailsScreenExpenses.categories[0].amount.toFloat(),
+                )
 
-            GraficoTransacciones(title = "Transactions", transactions = transaction)
-        }
+                GraficoTransacciones(title = "Transactions", transactions = transaction)
+            }
 
-        Box(Modifier
+            Box(Modifier
                 .fillMaxWidth()
                 .height(bottomPadding + 88.dp))
+        }
     }
+
 }
 
 @Composable

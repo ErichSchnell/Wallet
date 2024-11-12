@@ -18,12 +18,17 @@ fun MutableStateFlow<HomeUIState>.setTransactionWithCategory(transactions: List<
     this.update {it.copy(allTransactions = tr)}
 }
 fun MutableStateFlow<HomeUIState>.updateDate(){
-    val dateSelected = if (this.value.dateSelected == null && this.value.allTransactions.isNotEmpty()) {
-        this.value.allTransactions.first().date
+    val monthsUsed = this.value.allTransactions.reversed().mapNotNull { it.date?.getMonthAndYearString() }.distinct()
+    val monthSelected = monthsUsed.find { it == this.value.dateSelected }
+
+    Log.i("TAG ERICH", "monthsUsed: $monthsUsed")
+    Log.i("TAG ERICH", "monthSelected: $monthSelected")
+
+    if (monthSelected != null){
+        this.update {it.copy(monthList = monthsUsed.toList())}
     } else {
-        this.value.dateSelected
+        this.update {it.copy(monthList = monthsUsed.toList(), dateSelected = monthsUsed.last())}
     }
-    this.update {it.copy(dateSelected = dateSelected)}
 }
 
 

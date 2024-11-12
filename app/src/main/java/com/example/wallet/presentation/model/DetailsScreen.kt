@@ -1,5 +1,6 @@
 package com.example.wallet.presentation.model
 
+import android.util.Log
 import com.example.wallet.presentation.util.getMonthAndYearString
 import com.example.wallet.presentation.util.mapWithCategory
 import com.example.wallet.ui.theme.OnHomeContainer
@@ -18,7 +19,9 @@ data class DetailsScreen(
 
 
         val ctSelected = categories.find { it.id == categorySelected.id } ?: categories[0]
+        Log.i("TAG ERICH", "ctSelected: $ctSelected")
         val tr = transactions.mapWithCategory(ctSelected)
+        Log.i("TAG ERICH", "tr: $tr")
 
         return this.copy(
             transactions = tr,

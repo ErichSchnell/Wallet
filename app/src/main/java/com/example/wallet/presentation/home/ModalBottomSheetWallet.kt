@@ -231,7 +231,6 @@ fun CategoryNewTransaction(
                             contentColor = Color.White
                         ),
                         onClick = {
-                            Log.i("TAG ERICH", "CategoryNewTransaction: click aceptar")
                             onClickAddCategory()
                         }
                     ) {

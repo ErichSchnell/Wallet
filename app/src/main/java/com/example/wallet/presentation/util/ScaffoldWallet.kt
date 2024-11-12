@@ -233,7 +233,6 @@ fun ScaffoldWallet(
                                     transactionSelected = null
                                 },
                                 onClickAddCategory = {
-                                    Log.i("TAG ERICH", "add new category: scaffold ")
                                     showAddCategory = true
                                 }
                             )
@@ -262,7 +261,6 @@ fun ScaffoldWallet(
         onDismissRequest = { showAddCategory = false },
         onClickAddCategory = { category ->
             showAddCategory = false
-            Log.i("TAG ERICH", "add new category: aceptar en serio ")
             onClickAddCategory(category)
         }
     )

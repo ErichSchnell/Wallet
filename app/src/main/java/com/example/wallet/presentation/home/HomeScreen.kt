@@ -127,7 +127,7 @@ fun HomeScreen(
                                             bottomPadding = bottomPadding,
                                             detailsScreen = uiState.incomes,
                                             onClickNextCategory = {category ->  homeViewModel.changeCategory(category)},
-                                            dateSelected = uiState.dateSelected?.getMonthAndYearString().orEmpty(),
+                                            dateSelected = uiState.dateSelected.orEmpty(),
                                             onClickPreviousMonth = {homeViewModel.previousMonth()},
                                             onClickNextMonth = {homeViewModel.nextMonth()},
                                         )
@@ -139,7 +139,7 @@ fun HomeScreen(
                                             detailsScreen = uiState.expenses,
                                             onClickNextCategory = {category ->  homeViewModel.changeCategory(category)},
                                             onClickPreviousMonth = {homeViewModel.previousMonth()},
-                                            dateSelected = uiState.dateSelected?.getMonthAndYearString().orEmpty(),
+                                            dateSelected = uiState.dateSelected.orEmpty(),
                                             onClickNextMonth = {homeViewModel.nextMonth()},
                                         )
                                     }
@@ -150,7 +150,7 @@ fun HomeScreen(
                                             detailsScreen = uiState.home,
                                             detailsScreenIncome = uiState.incomes,
                                             detailsScreenExpenses = uiState.expenses,
-                                            dateSelected = uiState.dateSelected?.getMonthAndYearString().orEmpty(),
+                                            dateSelected = uiState.dateSelected.orEmpty(),
                                             onClickPreviousMonth = {homeViewModel.previousMonth()},
                                             onClickNextMonth = {homeViewModel.nextMonth()},
                                         )

@@ -33,7 +33,6 @@ fun DocumentSnapshot.DTO(): TransactionResponseModelData? {
             date = getTimestamp("date"),
             isBookmark = getBoolean("isBookmark") ?: false  // Valor por defectok
         )
-        Log.i("ERICH", "$date")
         date
     } catch (e: Exception) {
         Log.e("Firestore", "Error deserializing document: ${e.message}")

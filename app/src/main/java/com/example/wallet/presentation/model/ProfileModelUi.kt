@@ -14,7 +14,6 @@ data class ProfileModelUi(
 )
 
 fun ProfileResponseModelData.toUi(): ProfileModelUi {
-    Log.i("TAL ERICH", "$this")
     return ProfileModelUi(
         id = id.orEmpty(),
         name = name.orEmpty(),
