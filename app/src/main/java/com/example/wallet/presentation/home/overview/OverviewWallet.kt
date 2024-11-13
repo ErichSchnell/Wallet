@@ -64,6 +64,11 @@ fun OverviewWallet(
                     amountExpenses = detailsScreenExpenses.categories[0].amount.toFloat(),
                 )
 
+                GraficoByWeek(
+                    title = "Resumen Por Semanal",
+                    detailsScreenIncome.transactions,
+                    detailsScreenExpenses.transactions
+                )
 //                GraficoTransacciones(title = "Transactions", transactions = transaction)
             }
 

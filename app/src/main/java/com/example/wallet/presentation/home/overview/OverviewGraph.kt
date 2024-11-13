@@ -1,5 +1,6 @@
 package com.example.wallet.presentation.home.overview
 
+import android.text.TextPaint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -19,12 +20,17 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.wallet.presentation.home.trade.calculateTextSize
 import com.example.wallet.presentation.model.TransactionModelUI
 import com.example.wallet.presentation.util.composables.CardWallet
+import com.example.wallet.presentation.util.ex.getWeek
 import com.example.wallet.ui.theme.WalletColors
 import kotlin.math.abs
+import kotlin.math.max
 
 
 @Composable
@@ -102,12 +108,12 @@ fun WalletResumeChartGraph(
 
             drawPath(
                 path = pathTransactionsIncome,
-                color = WalletColors.icome().onContainer,
+                color = WalletColors.icome().container,
                 style = Stroke(width = 2.dp.toPx())
             )
             drawPath(
                 path = pathTransactionsExpenses,
-                color = WalletColors.expenses().onContainer,
+                color = WalletColors.expenses().container,
                 style = Stroke(width = 2.dp.toPx())
             )
         }
@@ -125,7 +131,7 @@ fun GraficoAcumulado(transaction: List<TransactionModelUI>) {
         amount += it.amount
         it.copy(amount = amount)
     }
-    GraficoTransacciones(title = "Transactions Acumuladas", transactions = transactionAcumulado)
+    GraficoTransacciones(title = "Resto Mensual: ${transactionAcumulado.last().amount}", transactions = transactionAcumulado)
 }
 
 @Composable
@@ -142,7 +148,7 @@ fun GraficoTransacciones(
             Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "$title : ${transactions.sumOf { it.amount }}")
+            Text(text = title)
             when{
                 maxValue > 0 && minValue >= 0  -> GraficoPositivo(
                     modifier = Modifier
@@ -240,12 +246,12 @@ fun GraficoPositivo(
             )
             drawPath(
                 path = pathTransactionsIncome,
-                color = WalletColors.icome().onContainer,
+                color = WalletColors.icome().container,
                 style = Stroke(width = 2.dp.toPx())
             )
             drawPath(
                 path = pathTransactionsExpenses,
-                color = WalletColors.expenses().onContainer,
+                color = WalletColors.expenses().container,
                 style = Stroke(width = 2.dp.toPx())
             )
             pointsList.forEach {
@@ -330,12 +336,12 @@ fun GraficoNegativo(
             )
             drawPath(
                 path = pathTransactionsIncome,
-                color = WalletColors.icome().onContainer,
+                color = WalletColors.icome().container,
                 style = Stroke(width = 2.dp.toPx())
             )
             drawPath(
                 path = pathTransactionsExpenses,
-                color = WalletColors.expenses().onContainer,
+                color = WalletColors.expenses().container,
                 style = Stroke(width = 2.dp.toPx())
             )
             pointsList.forEach {
@@ -421,12 +427,12 @@ fun GraficoReal(
             )
             drawPath(
                 path = pathTransactionsIncome,
-                color = WalletColors.icome().onContainer,
+                color = WalletColors.icome().container,
                 style = Stroke(width = 2.dp.toPx())
             )
             drawPath(
                 path = pathTransactionsExpenses,
-                color = WalletColors.expenses().onContainer,
+                color = WalletColors.expenses().container,
                 style = Stroke(width = 2.dp.toPx())
             )
             pointsList.forEach {
@@ -442,6 +448,122 @@ fun GraficoReal(
 
 
 }
+
+
+
+@Composable
+fun GraficoByWeek(
+    title: String,
+    transactionsIncome: List<TransactionModelUI>,
+    transactionsExpenses: List<TransactionModelUI>,
+) {
+    val trIncomeAbs = transactionsIncome.map { it.copy(amount = abs(it.amount)) }
+    val trExpensesAbs = transactionsExpenses.map { it.copy(amount = abs(it.amount)) }
+
+    val trIncome = listOf(
+        trIncomeAbs.getWeek(1).sumOf { it.amount }.toFloat(),
+        trIncomeAbs.getWeek(2).sumOf { it.amount }.toFloat(),
+        trIncomeAbs.getWeek(3).sumOf { it.amount }.toFloat(),
+        trIncomeAbs.getWeek(4).sumOf { it.amount }.toFloat(),
+    )
+    val trExpenses = listOf(
+        trExpensesAbs.getWeek(1).sumOf { it.amount }.toFloat(),
+        trExpensesAbs.getWeek(2).sumOf { it.amount }.toFloat(),
+        trExpensesAbs.getWeek(3).sumOf { it.amount }.toFloat(),
+        trExpensesAbs.getWeek(4).sumOf { it.amount }.toFloat(),
+    )
+    val maxAmount = max(trIncome.max(),trExpenses.max())
+
+    CardWallet(height = 300.dp) {
+        Column(
+            Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = title)
+
+            Row(Modifier.padding(16.dp).weight(1f).fillMaxWidth()) {
+                Column(modifier = Modifier
+                    .fillMaxHeight()
+                    .wrapContentWidth(), horizontalAlignment = Alignment.End) {
+                    Text(text = "$$maxAmount")
+                    Spacer(Modifier.weight(1f))
+                    Text(text = "$0")
+                }
+                Canvas(modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()) {
+                    val width = size.width * 0.85f
+                    val xStep = width / 4
+                    val yStep = size.height / maxAmount
+
+                    val widthStartBars = (size.width - width) / 2f
+                    val widthStartGuide = (size.width - width) / 2f
+
+                    for (index in 0 until 4) {
+                        val xPos = index * xStep
+                        val yPosIncome = size.height - (trIncome[index] * yStep)
+                        val yPosExpense = size.height - (trExpenses[index] * yStep)
+
+                        if (yPosIncome < yPosExpense){
+                            drawLine(
+                                color = WalletColors.icome().container,
+                                start = Offset(xPos + widthStartBars + xStep, size.height),
+                                end = Offset(xPos + widthStartBars + xStep, yPosIncome),
+                                strokeWidth = xStep * .75f
+                            )
+                            drawLine(
+                                color = WalletColors.expenses().container.copy(alpha = 0.7f),
+                                start = Offset(xPos + widthStartBars + xStep, size.height),
+                                end = Offset(xPos + widthStartBars + xStep, yPosExpense),
+                                strokeWidth = xStep * .75f
+                            )
+                        } else {
+                            drawLine(
+                                color = WalletColors.expenses().container,
+                                start = Offset(xPos + widthStartBars + xStep, size.height),
+                                end = Offset(xPos + widthStartBars + xStep, yPosExpense),
+                                strokeWidth = xStep * .75f
+                            )
+                            drawLine(
+                                color = WalletColors.icome().container.copy(alpha = 0.7f),
+                                start = Offset(xPos + widthStartBars + xStep, size.height),
+                                end = Offset(xPos + widthStartBars + xStep, yPosIncome),
+                                strokeWidth = xStep * .75f
+                            )
+                        }
+
+                        val textPaint = TextPaint().apply {
+                            color = Color.White.toArgb() // Color del texto
+                            textSize = calculateTextSize(4, 8.sp.toPx(), 12.sp.toPx())         // Tamaño del texto
+                            isAntiAlias = true           // Para bordes más suaves
+                        }
+                        val text = "s°${index + 1}"
+                        val textWidth = textPaint.measureText(text)
+                        drawContext.canvas.nativeCanvas.drawText(
+                            text,
+                            xPos + widthStartBars + xStep - (textWidth/2),
+                            size.height,
+                            textPaint
+                        )
+                    }
+
+                    val path = Path()
+                    path.moveTo(widthStartGuide, 0f)
+                    path.lineTo(widthStartGuide, size.height)
+                    path.moveTo(widthStartGuide, size.height)
+                    path.lineTo(size.width, size.height)
+                    drawPath(
+                        path = path,
+                        color = Color.White.copy(alpha = 0.5f),
+                        style = Stroke(width = 1.dp.toPx())
+                    )
+                }
+            }
+        }
+
+    }
+}
+
 
 
 @Composable
