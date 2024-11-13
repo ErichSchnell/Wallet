@@ -2,7 +2,7 @@ package com.example.wallet.presentation.model
 
 import androidx.compose.ui.graphics.Color
 import com.example.wallet.data.response.CategoryData
-import com.example.wallet.presentation.util.toColor
+import com.example.wallet.presentation.util.ex.toColor
 import java.util.Date
 
 

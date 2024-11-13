@@ -28,9 +28,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.wallet.R
 import com.example.wallet.presentation.model.CategoryUi
-import com.example.wallet.presentation.util.DialogWallet
-import com.example.wallet.presentation.util.TextFieldButtonWallet
-import com.example.wallet.presentation.util.TextFieldWallet
+import com.example.wallet.presentation.util.composables.DialogWallet
+import com.example.wallet.presentation.util.composables.TextFieldButtonWallet
+import com.example.wallet.presentation.util.composables.TextFieldWallet
 import com.example.wallet.ui.theme.categoryColors
 
 

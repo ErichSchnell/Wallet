@@ -1,7 +1,6 @@
 package com.example.wallet.ui.theme
 
 import androidx.compose.ui.graphics.Color
-import com.example.wallet.presentation.util.adjustBrightness
 
 val HomeContainer = Color(0xFF21455a)
 val OnHomeContainer = Color(0xFF83b5d3)

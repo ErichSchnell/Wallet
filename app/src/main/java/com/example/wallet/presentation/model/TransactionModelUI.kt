@@ -2,8 +2,7 @@ package com.example.wallet.presentation.model
 
 import com.example.wallet.R
 import com.example.wallet.data.response.TransactionResponseModelData
-import com.example.wallet.presentation.util.TypeOfTransaction
-import com.example.wallet.presentation.util.TypeOfTransaction.*
+import com.example.wallet.presentation.model.TypeOfTransaction.*
 import com.example.wallet.ui.theme.WalletColors
 
 data class TransactionModelUI(

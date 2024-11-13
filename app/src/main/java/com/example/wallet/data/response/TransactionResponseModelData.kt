@@ -1,14 +1,11 @@
 package com.example.wallet.data.response
 
 import android.util.Log
-import com.example.wallet.R
 import com.example.wallet.presentation.model.TransactionModelUI
-import com.example.wallet.presentation.util.TypeOfTransaction
-import com.example.wallet.presentation.util.toTimeStamp
+import com.example.wallet.presentation.model.TypeOfTransaction
+import com.example.wallet.presentation.util.ex.toTimeStamp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.PropertyName
-import kotlinx.coroutines.flow.update
 import java.util.Date
 import kotlin.math.abs
 

@@ -1,10 +1,6 @@
 package com.example.wallet.presentation.model
 
-import android.util.Log
 import com.example.wallet.data.response.ProfileResponseModelData
-import com.example.wallet.presentation.util.toColor
-import com.example.wallet.presentation.util.toStringHex
-import com.example.wallet.ui.theme.OnHomeContainer
 import java.util.Date
 
 data class ProfileModelUi(

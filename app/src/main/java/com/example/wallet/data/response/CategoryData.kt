@@ -1,9 +1,7 @@
 package com.example.wallet.data.response
 
-import androidx.compose.ui.graphics.Color
 import com.example.wallet.presentation.model.CategoryUi
-import com.example.wallet.presentation.util.toStringHex
-import java.util.Date
+import com.example.wallet.presentation.util.ex.toStringHex
 
 data class CategoryData(
     val id: String = "",

@@ -1,10 +1,7 @@
 package com.example.wallet.presentation.model
 
-import android.util.Log
-import com.example.wallet.presentation.util.getMonthAndYearString
-import com.example.wallet.presentation.util.mapWithCategory
+import com.example.wallet.presentation.util.ex.mapWithCategory
 import com.example.wallet.ui.theme.OnHomeContainer
-import java.util.Date
 
 data class DetailsScreen(
     val transactions: List<TransactionModelUI> = emptyList(),

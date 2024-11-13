@@ -10,18 +10,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.wallet.presentation.home.overview.OverviewWallet
+import com.example.wallet.presentation.home.profile.ProfileSetting
+import com.example.wallet.presentation.home.trade.TradeWallet
 import com.example.wallet.presentation.model.EventItem
-import com.example.wallet.presentation.util.BackgroundScreen
-import com.example.wallet.presentation.util.ScaffoldWallet
-import com.example.wallet.presentation.util.ShimmerHome
+import com.example.wallet.presentation.home.scaffold.ScaffoldWallet
 import com.example.wallet.presentation.util.ShowToast
-import com.example.wallet.presentation.util.getMonthAndYearString
 import kotlinx.coroutines.launch
-import java.util.Date
 
 @Composable
 fun HomeScreen(
@@ -122,7 +120,7 @@ fun HomeScreen(
 
                                 when (currentPage) {
                                     Screens.INCOME.id -> {
-                                        BudgetWallet(
+                                        TradeWallet(
                                             topPadding = topPadding,
                                             bottomPadding = bottomPadding,
                                             detailsScreen = uiState.incomes,
@@ -133,7 +131,7 @@ fun HomeScreen(
                                         )
                                     }
                                     Screens.EXPENSES.id -> {
-                                        BudgetWallet(
+                                        TradeWallet(
                                             topPadding = topPadding,
                                             bottomPadding = bottomPadding,
                                             detailsScreen = uiState.expenses,

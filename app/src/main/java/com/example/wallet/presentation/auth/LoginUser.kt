@@ -43,7 +43,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wallet.R
-import com.example.wallet.presentation.util.TextFieldWallet
+import com.example.wallet.presentation.util.composables.TextFieldWallet
 
 @Composable
 fun LoginUser(
