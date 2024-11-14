@@ -3,6 +3,7 @@ package com.example.wallet.presentation.util.ex
 import android.util.Log
 import com.example.wallet.presentation.home.HomeUIState
 import com.example.wallet.presentation.model.CategoryUi
+import com.example.wallet.presentation.model.DetailsScreen
 import com.example.wallet.presentation.model.ProfileModelUi
 import com.example.wallet.presentation.model.TransactionModelUI
 import com.example.wallet.presentation.model.withNewId
@@ -39,23 +40,28 @@ fun MutableStateFlow<HomeUIState>.updateTransactions(){
 
     this.update { uiState ->
         uiState.copy(
-            home = uiState.home.update(home.first,home.second),
-            incomes = uiState.incomes.update(income.first,income.second),
-            expenses = uiState.expenses.update(expenses.first,expenses.second),
+            home = uiState.home.update(home),
+            incomes = uiState.incomes.update(income),
+            expenses = uiState.expenses.update(expenses),
         )
     }
 }
-fun MutableStateFlow<HomeUIState>.mapBudget(budget: TypeOfTransaction): Pair<List<TransactionModelUI>, List<CategoryUi>> {
+fun MutableStateFlow<HomeUIState>.mapBudget(budget: TypeOfTransaction): DetailsScreen {
     val listBudget = this.value.allTransactions.mapNotNull { trans ->
         when(budget){
             EMPTY -> trans
             else -> { if (trans.budget == budget) trans else null}
         }
     }
+    val listBookmark = listBudget.mapNotNull { if (it.isBookmark) it else null }
     val listFilterDate = listBudget.mapWithDate(this.value.dateSelected)
     val categories = listFilterDate.getCategories(this.value.profileSelected?.categories)
 
-    return Pair(listFilterDate,categories)
+    return DetailsScreen(
+        transactions = listFilterDate,
+        transactionsBookmark = listBookmark,
+        categories = categories,
+    )
 }
 
 

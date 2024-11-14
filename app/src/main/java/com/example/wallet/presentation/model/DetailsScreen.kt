@@ -10,19 +10,18 @@ data class DetailsScreen(
     val transactionsBookmark: List<TransactionModelUI> = emptyList(),
 ) {
     fun update(
-        transactions: List<TransactionModelUI>,
-        categories:  List<CategoryUi>,
+        newDetails: DetailsScreen,
     ): DetailsScreen {
 
 
-        val ctSelected = categories.find { it.id == categorySelected.id } ?: categories[0]
-        val tr = transactions.mapWithCategory(ctSelected)
+        val ctSelected = newDetails.categories.find { it.id == categorySelected.id } ?: newDetails.categories[0]
+        val tr = newDetails.transactions.mapWithCategory(ctSelected)
 
         return this.copy(
             transactions = tr,
-            categories = categories,
+            categories = newDetails.categories,
             categorySelected = ctSelected,
-            transactionsBookmark = tr.mapNotNull { if (it.isBookmark) it else null },
+            transactionsBookmark = newDetails.transactionsBookmark
         )
     }
 }
