@@ -61,7 +61,7 @@ fun DialogAddCategory(
         ) {
             TextFieldWallet(
                 label = stringResource(R.string.category),
-                value = categoryName,
+                text = categoryName,
                 onValueChange = { categoryName = it },
                 leadingIconPainterResource = R.drawable.ic_chevron_right,
             )

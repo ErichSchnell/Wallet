@@ -165,11 +165,14 @@ fun Email(
     value: String,
     onValueChange: (String) -> Unit
 ) {
+
+
+
     TextFieldWallet(
         modifier = modifier,
         enabled = enabled,
         label = stringResource(R.string.email_label_text_field),
-        value = value,
+        text = value,
         onValueChange = { onValueChange(it) },
         leadingIconPainterResource = R.drawable.ic_email,
         keyboardOptions = KeyboardOptions(
@@ -207,7 +210,7 @@ fun Password(
         modifier = modifier,
         enabled = enabled,
         label = label,
-        value = value,
+        text = value,
         onValueChange = { onValueChange(it) },
         isTextVisible = isPasswordVisible,
         leadingIconPainterResource = R.drawable.ic_lock,

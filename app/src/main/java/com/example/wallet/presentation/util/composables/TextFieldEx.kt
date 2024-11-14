@@ -1,9 +1,13 @@
 package com.example.wallet.presentation.util.composables
 
+import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -11,10 +15,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
@@ -31,6 +42,10 @@ fun TextFieldDefaults.colorsWallet() = TextFieldDefaults.colors().copy(
     focusedTrailingIconColor = MaterialTheme.colorScheme.background,
     unfocusedLeadingIconColor = MaterialTheme.colorScheme.background,
     focusedLeadingIconColor = MaterialTheme.colorScheme.background,
+    textSelectionColors = TextSelectionColors(
+        MaterialTheme.colorScheme.background,
+        MaterialTheme.colorScheme.background.copy(alpha = 0.4f),
+    ),
 
 //    disabledTextColor = MaterialTheme.colorScheme.background,
 //    disabledContainerColor = MaterialTheme.colorScheme.onBackground,
@@ -44,7 +59,7 @@ fun TextFieldDefaults.colorsWallet() = TextFieldDefaults.colors().copy(
 fun TextFieldWallet(
     modifier: Modifier = Modifier,
     label: String,
-    value: String,
+    text: String,
     enabled: Boolean = true,
     isTextVisible: Boolean = true,
     leadingIconPainterResource: Int? = null,
@@ -53,38 +68,53 @@ fun TextFieldWallet(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     onValueChange: (String) -> Unit,
     onClickTrailingIcon: (Boolean) -> Unit = {},
-) = TextField(
-    modifier = modifier,
-    label = { Text(text = label) },
-    value = value,
-    enabled = enabled,
-    onValueChange = { onValueChange(it) },
-    colors = TextFieldDefaults.colorsWallet(),
-    maxLines = 1,
-    keyboardOptions = keyboardOptions,
-    keyboardActions = keyboardActions,
-    singleLine = true,
-    leadingIcon = {
-        if (leadingIconPainterResource != null){
-            Icon(
-                painter = painterResource(leadingIconPainterResource),
-                contentDescription = null,
-                modifier = Modifier.size(18.dp)
-            )
-        }
-    },
-    visualTransformation = if (isTextVisible) VisualTransformation.None else PasswordVisualTransformation(),
-    trailingIcon = {
-        if (trailingIconPainterResource != null){
-            IconButton(onClick = { onClickTrailingIcon(!isTextVisible) }) {
+) {
+    var value by remember { mutableStateOf(TextFieldValue(text)) }
+    val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    LaunchedEffect(isFocused) {
+        Log.i("TAG ERICH", "TextFieldWallet ${value.text}: $isFocused")
+        value = value.copy(selection = if (isFocused) TextRange(0, value.text.length) else TextRange.Zero)
+    }
+
+    TextField(
+        modifier = modifier,
+        label = { Text(text = label) },
+        value = value,
+        enabled = enabled,
+        onValueChange = {
+            value = it
+            onValueChange(it.text) },
+        colors = TextFieldDefaults.colorsWallet(),
+        interactionSource = interactionSource,
+        maxLines = 1,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        singleLine = true,
+        leadingIcon = {
+            if (leadingIconPainterResource != null) {
                 Icon(
-                    painter = painterResource(trailingIconPainterResource),
+                    painter = painterResource(leadingIconPainterResource),
                     contentDescription = null,
+                    modifier = Modifier.size(18.dp)
                 )
             }
-        }
-    },
-)
+        },
+        visualTransformation = if (isTextVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        trailingIcon = {
+            if (trailingIconPainterResource != null) {
+                IconButton(onClick = { onClickTrailingIcon(!isTextVisible) }) {
+                    Icon(
+                        painter = painterResource(trailingIconPainterResource),
+                        contentDescription = null,
+                    )
+                }
+            }
+        },
+    )
+}
+
 
 
 @Composable

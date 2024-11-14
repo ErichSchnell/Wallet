@@ -193,7 +193,7 @@ fun FirstName(
         modifier = modifier,
         enabled = enabled,
         label = stringResource(R.string.first_name_label_text_field),
-        value = value,
+        text = value,
         onValueChange = { onValueChange(it) },
         leadingIconPainterResource = R.drawable.ic_chevron_right,
         keyboardOptions = KeyboardOptions(
@@ -220,7 +220,7 @@ fun LastName(
         modifier = modifier,
         enabled = enabled,
         label = stringResource(R.string.last_name_label_text_field),
-        value = value,
+        text = value,
         onValueChange = { onValueChange(it) },
         leadingIconPainterResource = R.drawable.ic_chevron_right,
         keyboardOptions = KeyboardOptions(

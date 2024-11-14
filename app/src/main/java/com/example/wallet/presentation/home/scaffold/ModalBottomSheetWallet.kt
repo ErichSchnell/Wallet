@@ -306,7 +306,7 @@ fun MotiveNewTransaction(
             .padding(horizontal = 16.dp),
         enabled = enabled,
         label = stringResource(R.string.description),
-        value = value,
+        text = value,
         leadingIconPainterResource = R.drawable.ic_chevron_right,
         onValueChange = onValueChange,
         keyboardOptions = KeyboardOptions(
@@ -329,7 +329,7 @@ fun AmountNewTransaction(
             .padding(horizontal = 16.dp),
         enabled = enabled,
         label = stringResource(R.string.amount),
-        value = value,
+        text = value,
         leadingIconPainterResource = R.drawable.ic_chevron_right,
         onValueChange = onValueChange,
         keyboardOptions = KeyboardOptions(
