@@ -74,16 +74,17 @@ fun ModalBottomSheetWallet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    var budget by remember { mutableStateOf(item?.budget ?: TypeOfTransaction.EMPTY) }
+
+
     var description by remember { mutableStateOf(item?.description.orEmpty()) }
     var amount by remember { mutableStateOf( if (item?.amount != null) abs(item.amount).toString() else "") }
+
     var category by remember { mutableStateOf(item?.category ?: CategoryUi()) }
-    var budget by remember { mutableStateOf(item?.budget ?: TypeOfTransaction.EMPTY) }
     val isBookmark by remember { mutableStateOf(item?.isBookmark ?: false ) }
 
     var dateLong by remember { mutableStateOf(item?.date) }
     var showPickerDialog by remember { mutableStateOf(false) }
-
-    val focusManager = LocalFocusManager.current
 
     if (showPickerDialog) {
         CalendarPickerDialog(
@@ -104,6 +105,7 @@ fun ModalBottomSheetWallet(
             modifier = Modifier.height(maxBottomBardHeight),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val focusManager = LocalFocusManager.current
             TitleNewTransaction()
             HorizontalDivider(modifier = Modifier
                 .fillMaxWidth()
@@ -117,7 +119,6 @@ fun ModalBottomSheetWallet(
             Spacer(Modifier.height(16.dp))
 
             CategoryNewTransaction(
-                focusManager = focusManager,
                 enabled = !isLoading,
                 value = category,
                 categories = categories,
@@ -135,6 +136,7 @@ fun ModalBottomSheetWallet(
             Spacer(Modifier.height(16.dp))
 
             AmountNewTransaction(
+                focusManager = focusManager,
                 enabled = !isLoading,
                 value = amount,
                 onValueChange = { amount = it }
@@ -174,7 +176,6 @@ fun ModalBottomSheetWallet(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CategoryNewTransaction(
-    focusManager: FocusManager,
     enabled: Boolean,
     value: CategoryUi,
     categories: List<CategoryUi>,
@@ -193,7 +194,6 @@ fun CategoryNewTransaction(
             value = value.name,
             leadingIconPainterResource = R.drawable.ic_chevron_right,
             onClickTextField = {
-                focusManager.clearFocus()
                 isExtended = true
             }
         )
@@ -218,7 +218,6 @@ fun CategoryNewTransaction(
                             onClick = {
                                 isExtended = false
                                 onValueChange(category)
-                                focusManager.moveFocus(FocusDirection.Down)
                             }
                         ) {
                             Text(category.name)
@@ -321,6 +320,7 @@ fun MotiveNewTransaction(
 fun AmountNewTransaction(
     enabled: Boolean,
     value: String,
+    focusManager: FocusManager,
     onValueChange: (String) -> Unit
 ) {
     TextFieldWallet(
@@ -335,7 +335,8 @@ fun AmountNewTransaction(
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Done
-        )
+        ),
+        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
     )
 }
 

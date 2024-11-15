@@ -165,9 +165,6 @@ fun Email(
     value: String,
     onValueChange: (String) -> Unit
 ) {
-
-
-
     TextFieldWallet(
         modifier = modifier,
         enabled = enabled,
