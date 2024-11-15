@@ -33,7 +33,7 @@ fun MutableStateFlow<HomeUIState>.updateDate(){
 
 
 
-fun MutableStateFlow<HomeUIState>.updateTransactions(){
+fun MutableStateFlow<HomeUIState>.updateDetailsScreens(){
     val home = this.mapBudget(EMPTY)
     val income = this.mapBudget(INCOME)
     val expenses = this.mapBudget(EXPENSES)

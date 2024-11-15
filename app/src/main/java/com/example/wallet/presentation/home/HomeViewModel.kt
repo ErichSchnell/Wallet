@@ -17,7 +17,7 @@ import com.example.wallet.presentation.util.ex.getProfileRemoveCategory
 import com.example.wallet.presentation.util.ex.getProfileWithNewCategory
 import com.example.wallet.presentation.util.ex.setTransactionWithCategory
 import com.example.wallet.presentation.util.ex.updateDate
-import com.example.wallet.presentation.util.ex.updateTransactions
+import com.example.wallet.presentation.util.ex.updateDetailsScreens
 import com.example.wallet.ui.theme.WalletColors
 import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -67,6 +67,7 @@ class HomeViewModel @Inject constructor(
             val profileSelected = response.find { profile -> profile == newProfileSelected }
 
             _uiState.update { it.copy(profiles = response, profileSelected = profileSelected ?: response[0]) }
+            updateTransactions(_uiState.value.allTransactions)
 
         } catch (e: FirebaseFirestoreException) {
             _uiState.update { it.copy(toastTextExeption = "${e.message}") }
@@ -79,9 +80,7 @@ class HomeViewModel @Inject constructor(
                 email = _uiState.value.user.email,
                 profileId = _uiState.value.profileSelected?.id.orEmpty()
             ).collect { transactions ->
-                _uiState.setTransactionWithCategory(transactions)
-                _uiState.updateDate()
-                _uiState.updateTransactions()
+                updateTransactions(transactions)
                 _uiState.update { it.copy(isLoading = false) }
             }
         } catch (e: FirebaseFirestoreException) {
@@ -89,6 +88,12 @@ class HomeViewModel @Inject constructor(
             Log.e("TAG", "getTransactions: ${e.message}")
             Log.e("TAG", "getTransactions: ${e.code}")
         }
+    }
+    private fun updateTransactions( transactions: List<TransactionModelUI>){
+        if (transactions.isEmpty()) return
+        _uiState.setTransactionWithCategory(transactions)
+        _uiState.updateDate()
+        _uiState.updateDetailsScreens()
     }
 
     fun addTransaction(transactionItem: TransactionModelUI) {
@@ -221,7 +226,7 @@ class HomeViewModel @Inject constructor(
             Screens.OVERVIEW -> { _uiState.update { it.copy(home = it.home.copy(categorySelected = category)) }}
             else -> {}
         }
-        _uiState.updateTransactions()
+        _uiState.updateDetailsScreens()
     }
 
     fun deleteCategory(category: CategoryUi) {
@@ -259,11 +264,11 @@ class HomeViewModel @Inject constructor(
             }
             index > 0 -> {
                 _uiState.update { it.copy( dateSelected = _uiState.value.monthList[index - 1]) }
-                _uiState.updateTransactions()
+                _uiState.updateDetailsScreens()
             }
             else -> {
                 _uiState.update { it.copy( dateSelected = _uiState.value.monthList.last()) }
-                _uiState.updateTransactions()
+                _uiState.updateDetailsScreens()
             }
         }
     }
@@ -277,11 +282,11 @@ class HomeViewModel @Inject constructor(
             }
             index < (uiState.value.monthList.size - 1) -> {
                 _uiState.update { it.copy( dateSelected = _uiState.value.monthList[index + 1]) }
-                _uiState.updateTransactions()
+                _uiState.updateDetailsScreens()
             }
             else -> {
                 _uiState.update { it.copy( dateSelected = _uiState.value.monthList.last()) }
-                _uiState.updateTransactions()
+                _uiState.updateDetailsScreens()
             }
         }
     }
