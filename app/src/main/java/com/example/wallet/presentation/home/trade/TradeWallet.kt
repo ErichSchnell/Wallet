@@ -56,11 +56,13 @@ fun TradeWallet(
             .fillMaxSize()
             .padding(top = topPadding)
     ) {
-        MonthFilter(
-            date = dateSelected,
-            onClickPreviousMonth = onClickPreviousMonth,
-            onClickNextMonth = onClickNextMonth
-        )
+        if (dateSelected.isNotEmpty()) {
+            MonthFilter(
+                date = dateSelected,
+                onClickPreviousMonth = onClickPreviousMonth,
+                onClickNextMonth = onClickNextMonth
+            )
+        }
         Column(
             Modifier
                 .fillMaxWidth()

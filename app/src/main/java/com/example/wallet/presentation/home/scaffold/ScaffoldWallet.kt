@@ -158,8 +158,8 @@ fun ScaffoldWallet(
             sheetDragHandle = { SheetDragHandle() }
         ) {
 
-            val topPadding =
-                TopAppBarDefaults.windowInsets.asPaddingValues().calculateTopPadding() + 56.dp
+            val topPadding = TopAppBarDefaults.windowInsets.asPaddingValues().calculateTopPadding() + 56.dp
+
             Box(Modifier.fillMaxSize()) {
                 content(topPadding, maxBottomScaffoldBardHeight)
                 TopBar(

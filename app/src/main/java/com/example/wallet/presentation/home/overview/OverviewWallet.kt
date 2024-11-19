@@ -48,11 +48,13 @@ fun OverviewWallet(
             .fillMaxSize()
             .padding(top = topPadding)
     ) {
-        MonthFilter(
-            date = dateSelected,
-            onClickPreviousMonth = onClickPreviousMonth,
-            onClickNextMonth = onClickNextMonth
-        )
+        if (dateSelected.isNotEmpty()) {
+            MonthFilter(
+                date = dateSelected,
+                onClickPreviousMonth = onClickPreviousMonth,
+                onClickNextMonth = onClickNextMonth
+            )
+        }
         Column(Modifier.fillMaxWidth().weight(1f).verticalScroll(scrollState)) {
             if (transaction.isNotEmpty()) {
 

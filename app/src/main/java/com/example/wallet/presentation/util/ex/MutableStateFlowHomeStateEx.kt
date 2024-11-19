@@ -13,22 +13,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 
-fun MutableStateFlow<HomeUIState>.setTransactionWithCategory(transactions: List<TransactionModelUI>){
+fun MutableStateFlow<HomeUIState>.setTransactionWithCategory(transactions: List<TransactionModelUI> = emptyList()){
     val categories = this.value.profileSelected?.categories
     val tr = transactions.setWithCategory(categories)
     this.update {it.copy(allTransactions = tr)}
 }
 fun MutableStateFlow<HomeUIState>.updateDate(){
     val monthsUsed = this.value.allTransactions.reversed().mapNotNull { it.date?.getMonthAndYearString() }.distinct()
-    val monthSelected = monthsUsed.find { it == this.value.dateSelected }
+    val monthSelected:String?
+
+    monthSelected = if (monthsUsed.isNotEmpty()){
+        monthsUsed.find { it == this.value.dateSelected } ?: monthsUsed.last()
+    } else null
 
     Log.i("TAG ERICH", "monthSelected: $monthSelected")
 
-    if (monthSelected != null){
-        this.update {it.copy(monthList = monthsUsed.toList())}
-    } else {
-        this.update {it.copy(monthList = monthsUsed.toList(), dateSelected = monthsUsed.last())}
-    }
+    this.update {it.copy(monthList = monthsUsed.toList(), dateSelected = monthSelected)}
 }
 
 

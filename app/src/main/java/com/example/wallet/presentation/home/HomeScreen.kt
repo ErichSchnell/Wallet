@@ -163,7 +163,7 @@ fun HomeScreen(
                         ProfileSetting(
                             topPadding = topPadding,
                             profileSelected = uiState.profileSelected,
-                            onClickEditCategory = {homeViewModel.addCategory(category = it)},
+                            onClickEditCategory = {homeViewModel.editCategory(category = it)},
                             onClickDeleteCategory = {homeViewModel.deleteCategory(category = it)}
                         )
 

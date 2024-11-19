@@ -90,10 +90,19 @@ class HomeViewModel @Inject constructor(
         }
     }
     private fun updateTransactions( transactions: List<TransactionModelUI>){
-        if (transactions.isEmpty()) return
+//        if (transactions.isEmpty()) return
         _uiState.setTransactionWithCategory(transactions)
         _uiState.updateDate()
         _uiState.updateDetailsScreens()
+    }
+    private fun clearTransactions(){
+        _uiState.update { it.copy(
+            allTransactions = emptyList(),
+            dateSelected = null,
+            home = DetailsScreen(),
+            incomes = DetailsScreen(),
+            expenses = DetailsScreen(),
+        ) }
     }
 
     fun addTransaction(transactionItem: TransactionModelUI) {
@@ -189,6 +198,7 @@ class HomeViewModel @Inject constructor(
 
                     if (result){ getProfiles(newProfile) }
                 } else {
+                    clearTransactions()
                     _uiState.update { it.copy(profileSelected = profile) }
                 }
                 getTransactions()
@@ -200,6 +210,24 @@ class HomeViewModel @Inject constructor(
     }
 
     fun addCategory(category: CategoryUi) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO){
+
+                val profile = _uiState.getProfileWithNewCategory(category)
+                if (profile != null){
+
+                    val result = setProfile(_uiState.value.user.email, profile)
+
+                    if (result){
+                        getProfiles(profile)
+//                        _uiState.updateTransactions(_uiState.value.allTransactions)
+                    }
+                }
+                _uiState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+    fun editCategory(category: CategoryUi) {
         viewModelScope.launch {
             withContext(Dispatchers.IO){
 
