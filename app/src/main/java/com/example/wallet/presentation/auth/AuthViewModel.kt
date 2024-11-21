@@ -7,11 +7,13 @@ import com.example.wallet.data.network.AuthService
 import com.example.wallet.data.network.DatabaseService
 import com.example.wallet.data.response.toData
 import com.example.wallet.presentation.model.ProfileModelUi
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -54,7 +56,6 @@ class AuthViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = false) }
         }
     }
-
     fun singUp(
         firstName: String,
         lastName: String,
@@ -85,7 +86,6 @@ class AuthViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = false) }
         }
     }
-
     suspend private fun singUpUser(email: String, password: String): String? {
         try {
             return auth.register(email, password)?.email
@@ -97,7 +97,6 @@ class AuthViewModel @Inject constructor(
         }
         return null
     }
-
     private suspend fun setProfile(email: String, profile: ProfileModelUi): Boolean {
         try {
             return db.setProfile(email, profile.toData())
@@ -108,7 +107,6 @@ class AuthViewModel @Inject constructor(
         }
         return false
     }
-
     private suspend fun setUser(email: String, firstName: String, lastName: String): Boolean {
         try {
             return  db.setUser(firstName = firstName, lastName = lastName, email = email)
@@ -121,19 +119,62 @@ class AuthViewModel @Inject constructor(
     }
 
 
+    /*
+    *------- Google ---------
+    */
+    fun onGoogleLoginSelected(googleLauncherLogin: (GoogleSignInClient) -> Unit) {
+        val gsc = auth.getGoogleClient()
+        googleLauncherLogin(gsc)
+    }
+    fun loginWithGoogle(idToken: String, navigateToHome: (String) -> Unit) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            try {
+                val user = withContext(Dispatchers.IO) { auth.loginWithGoogle(idToken) }
+                Log.i("TAG ERICH", "loginWithGoogle user: ${user}")
+                user?.let {
+                    val isUser = getUser(it.email.orEmpty())
+                    Log.i("TAG ERICH", "loginWithGoogle isUser: ${user}")
+                    if (isUser){
+                        navigateToHome(it.email.orEmpty())
+                    } else {
+                        val setUserResult = withContext(Dispatchers.IO) { setUser(email = it.email.orEmpty(), firstName = it.displayName.orEmpty(), lastName = "" ) }
+                        Log.i("TAG ERICH", "loginWithGoogle setUserResult: ${setUserResult}")
+                        val setProfileResult = withContext(Dispatchers.IO) { setProfile(email = it.email.orEmpty(), profile = ProfileModelUi()) }
+                        Log.i("TAG ERICH", "loginWithGoogle setProfileResult: ${setProfileResult}")
+                        if (setUserResult && setProfileResult){
+                            navigateToHome(it.email.orEmpty())
+                        }
+                    }
+                }
+
+            } catch (e: Exception) {
+                Log.e("TAG ERICH", "${e.message}")
+            }
+            _uiState.update { it.copy(isLoading = false) }
+        }
+    }
+    private suspend fun getUser(userEmail: String): Boolean {
+        try {
+            val user = db.getUser(userEmail)
+            user.email.ifEmpty { return false }
+        } catch (e: FirebaseFirestoreException) {
+            _uiState.update { it.copy(toastText = "${e.message}") }
+            return false
+        }
+        return true
+    }
+
+
     fun showToast(toast: String) {
         _uiState.update { it.copy(toastText = toast) }
     }
-
     fun clearToast() {
         _uiState.update { it.copy(toastText = "") }
     }
-
     fun selectScreen(screen: ScreeView) {
         _uiState.update { it.copy(screen = screen) }
     }
-
-
 }
 
 data class LoginUIState(

@@ -1,6 +1,11 @@
 package com.example.wallet.presentation.auth
 
+import android.app.Activity
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -14,10 +19,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.wallet.presentation.util.ShowToast
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
 
 
 @Composable
@@ -36,6 +43,19 @@ fun AuthScreen (
     var password by remember { mutableStateOf("") }         //123456
     var passwordVerify by remember { mutableStateOf("") }   //123456
 
+    val context = LocalContext.current
+
+    val googleLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()){ result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK){
+            val task =  GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account = task.getResult(ApiException::class.java)!!
+                authViewModel.loginWithGoogle(account.idToken!!, navigateToHome = navigateToHome)
+            }catch (e: ApiException){
+                Toast.makeText(context, "Ha ocurrido un error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
 
     Scaffold { paddingValues ->
@@ -49,7 +69,11 @@ fun AuthScreen (
                     passwordValue = password,
                     onValuePasswordChange = { password = it },
                     onClickLogin = { authViewModel.login(email, password, navigateToHome) },
-                    onClickLoginWithGoogle = { authViewModel.showToast("Login With Google") },
+                    onClickLoginWithGoogle = {
+                        authViewModel.onGoogleLoginSelected {
+                            googleLauncher.launch(it.signInIntent)
+                        }
+                     },
                     onClickCreateUser = { authViewModel.selectScreen(ScreeView.SING_UP) },
                 )
             }
