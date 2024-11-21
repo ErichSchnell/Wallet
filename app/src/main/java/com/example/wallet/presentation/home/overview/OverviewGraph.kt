@@ -1,6 +1,7 @@
 package com.example.wallet.presentation.home.overview
 
 import android.text.TextPaint
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -474,14 +475,21 @@ fun GraficoByWeek(
     )
     val maxAmount = max(trIncome.max(),trExpenses.max())
 
-    CardWallet(height = 300.dp) {
+    CardWallet (height = 300.dp) {
+
+
+
         Column(
             Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(text = title)
 
-            Row(Modifier.padding(16.dp).weight(1f).fillMaxWidth()) {
+            Row(
+                Modifier
+                    .padding(16.dp)
+                    .weight(1f)
+                    .fillMaxWidth()) {
                 Column(modifier = Modifier
                     .fillMaxHeight()
                     .wrapContentWidth(), horizontalAlignment = Alignment.End) {
@@ -489,79 +497,130 @@ fun GraficoByWeek(
                     Spacer(Modifier.weight(1f))
                     Text(text = "$0")
                 }
-                Canvas(modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()) {
-                    val width = size.width * 0.85f
+
+
+                BoxWithConstraints(Modifier.fillMaxSize()) {
+                    val width = constraints.maxWidth.toFloat() * 0.85f
                     val xStep = width / 4
-                    val yStep = size.height / maxAmount
+                    val yStep = constraints.maxHeight.toFloat() / maxAmount
 
-                    val widthStartBars = (size.width - width) / 2f
-                    val widthStartGuide = (size.width - width) / 2f
+                    val widthStartBars = (constraints.maxWidth.toFloat() - width) / 2f
+                    val widthStartGuide = (constraints.maxWidth.toFloat() - width) / 2f
 
-                    for (index in 0 until 4) {
-                        val xPos = index * xStep
-                        val yPosIncome = size.height - (trIncome[index] * yStep)
-                        val yPosExpense = size.height - (trExpenses[index] * yStep)
 
-                        if (yPosIncome < yPosExpense){
-                            drawLine(
-                                color = WalletColors.icome().container,
-                                start = Offset(xPos + widthStartBars + xStep, size.height),
-                                end = Offset(xPos + widthStartBars + xStep, yPosIncome),
-                                strokeWidth = xStep * .75f
+                    Canvas(modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth()) {
+
+                        for (index in 0 until 4) {
+
+                            val pointIncome = scaledOffset(
+                                offset = Offset(index.toFloat(), trIncome[index]),
+                                maxX = 4f,
+                                maxY = maxAmount,
+                                canvasWidth = width,
+                                canvasHeight = constraints.maxHeight.toFloat()
                             )
-                            drawLine(
-                                color = WalletColors.expenses().container.copy(alpha = 0.7f),
-                                start = Offset(xPos + widthStartBars + xStep, size.height),
-                                end = Offset(xPos + widthStartBars + xStep, yPosExpense),
-                                strokeWidth = xStep * .75f
+                            val pointExpenses = scaledOffset(
+                                offset = Offset(index.toFloat(), trExpenses[index]),
+                                maxX = 4f,
+                                maxY = maxAmount,
+                                canvasWidth = width,
+                                canvasHeight = constraints.maxHeight.toFloat()
                             )
-                        } else {
-                            drawLine(
-                                color = WalletColors.expenses().container,
-                                start = Offset(xPos + widthStartBars + xStep, size.height),
-                                end = Offset(xPos + widthStartBars + xStep, yPosExpense),
-                                strokeWidth = xStep * .75f
-                            )
-                            drawLine(
-                                color = WalletColors.icome().container.copy(alpha = 0.7f),
-                                start = Offset(xPos + widthStartBars + xStep, size.height),
-                                end = Offset(xPos + widthStartBars + xStep, yPosIncome),
-                                strokeWidth = xStep * .75f
+
+                            val xPos = index * xStep
+                            val yPosIncome = size.height - (trIncome[index] * yStep)
+//                          val yPosExpense = size.height - (trExpenses[index] * yStep)
+
+                            Log.i("TAG ERICH", "pointIncome: (${pointIncome.x}, ${pointIncome.y})")
+                            Log.i("TAG ERICH", "(xPos,yPosIncome): ($xPos, $yPosIncome)")
+
+
+
+                            if (pointIncome.y < pointExpenses.y){
+                                drawLine(
+                                    color = WalletColors.icome().container,
+                                    start = Offset(pointIncome.x + widthStartBars + xStep, size.height),
+                                    end = Offset(pointIncome.x + widthStartBars + xStep, pointIncome.y),
+                                    strokeWidth = xStep * .75f
+                                )
+                                drawLine(
+                                    color = WalletColors.expenses().container.copy(alpha = 0.7f),
+                                    start = Offset(pointExpenses.x + widthStartBars + xStep, size.height),
+                                    end = Offset(pointExpenses.x + widthStartBars + xStep, pointExpenses.y),
+                                    strokeWidth = xStep * .75f
+                                )
+                            } else {
+                                drawLine(
+                                    color = WalletColors.expenses().container,
+                                    start = Offset(pointExpenses.x + widthStartBars + xStep, size.height),
+                                    end = Offset(pointExpenses.x + widthStartBars + xStep, pointExpenses.y),
+                                    strokeWidth = xStep * .75f
+                                )
+                                drawLine(
+                                    color = WalletColors.icome().container.copy(alpha = 0.7f),
+                                    start = Offset(pointIncome.x + widthStartBars + xStep, size.height),
+                                    end = Offset(pointIncome.x + widthStartBars + xStep, pointIncome.y),
+                                    strokeWidth = xStep * .75f
+                                )
+                            }
+
+                            val textPaint = TextPaint().apply {
+                                color = Color.White.toArgb() // Color del texto
+                                textSize = calculateTextSize(4, 8.sp.toPx(), 12.sp.toPx())         // Tamaño del texto
+                                isAntiAlias = true           // Para bordes más suaves
+                            }
+                            val text = "s°${index + 1}"
+                            val textWidth = textPaint.measureText(text)
+                            drawContext.canvas.nativeCanvas.drawText(
+                                text,
+                                xPos + widthStartBars + xStep - (textWidth/2),
+                                size.height,
+                                textPaint
                             )
                         }
 
-                        val textPaint = TextPaint().apply {
-                            color = Color.White.toArgb() // Color del texto
-                            textSize = calculateTextSize(4, 8.sp.toPx(), 12.sp.toPx())         // Tamaño del texto
-                            isAntiAlias = true           // Para bordes más suaves
-                        }
-                        val text = "s°${index + 1}"
-                        val textWidth = textPaint.measureText(text)
-                        drawContext.canvas.nativeCanvas.drawText(
-                            text,
-                            xPos + widthStartBars + xStep - (textWidth/2),
-                            size.height,
-                            textPaint
+                        val path = Path()
+                        path.moveTo(widthStartGuide, 0f)
+                        path.lineTo(widthStartGuide, size.height)
+                        path.moveTo(widthStartGuide, size.height)
+                        path.lineTo(size.width, size.height)
+                        drawPath(
+                            path = path,
+                            color = Color.White.copy(alpha = 0.5f),
+                            style = Stroke(width = 1.dp.toPx())
                         )
                     }
 
-                    val path = Path()
-                    path.moveTo(widthStartGuide, 0f)
-                    path.lineTo(widthStartGuide, size.height)
-                    path.moveTo(widthStartGuide, size.height)
-                    path.lineTo(size.width, size.height)
-                    drawPath(
-                        path = path,
-                        color = Color.White.copy(alpha = 0.5f),
-                        style = Stroke(width = 1.dp.toPx())
-                    )
                 }
             }
         }
 
     }
+}
+
+private fun scaledOffset(
+    offset: Offset,
+    minX: Float = 0f,
+    maxX: Float,
+    minY:Float = 0f,
+    maxY:Float,
+    canvasStart:Float = 0f,
+    canvasWidth:Float,
+    canvasHeight:Float,
+): Offset {
+    val x = offset.x
+    val y = offset.y
+
+    val width = canvasWidth - canvasStart
+
+    val xStep = width / (maxX - minX)
+    val scaledX = (x - minX) * xStep  //(x - minX) / (maxX - minX)
+
+    val yStep = canvasHeight / (maxY - minY)
+    val scaledY = canvasHeight - ((y - minY) * yStep)
+    return Offset(scaledX,scaledY)
 }
 
 
