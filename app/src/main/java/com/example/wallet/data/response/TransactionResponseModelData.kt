@@ -38,10 +38,11 @@ fun DocumentSnapshot.DTO(): TransactionResponseModelData? {
 }
 
 fun TransactionModelUI.toData(): TransactionResponseModelData {
+    Log.i("TAG ERICH", "toData: $this")
     if (this.budget == TypeOfTransaction.EMPTY) throw IllegalArgumentException("0")
+    if (this.category.id.isBlank()) throw IllegalArgumentException("3")
     if (this.description.isBlank()) throw IllegalArgumentException("1")
     if (this.amount == .0) throw IllegalArgumentException("2")
-    if (this.category.id.isBlank()) throw IllegalArgumentException("3")
 
     val timeStamp = this.date.toTimeStamp()
     val idCurrent = this.id.ifBlank {

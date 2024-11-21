@@ -156,6 +156,7 @@ class HomeViewModel @Inject constructor(
                     profileId = _uiState.value.profileSelected?.id.orEmpty(),
                     itemId = itemId
                 )
+                _uiState.update { it.copy(transactionSelected = null) }
             }
         }
     }

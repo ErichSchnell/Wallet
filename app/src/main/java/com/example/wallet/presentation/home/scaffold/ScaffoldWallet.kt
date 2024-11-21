@@ -86,6 +86,8 @@ fun ScaffoldWallet(
 
     onClickNavigationIcon: () -> Unit = {},
 
+    transactionSelected: TransactionModelUI?,
+    onClickSelectTransaction: (TransactionModelUI?) -> Unit,
     transactionList: List<TransactionModelUI>,
     transactionBookmark: List<TransactionModelUI>,
 
@@ -98,15 +100,11 @@ fun ScaffoldWallet(
 
     showBottomBar: Boolean = true,
     onClickBottomNavigation: (Int) -> Unit = {},
-
     onClickEventItem: (TransactionModelUI, EventItem) -> Unit,
-
     onClickAddCategory: (CategoryUi) -> Unit,
 
     content: @Composable (Dp, Dp) -> Unit
 ) {
-
-    var transactionSelected by remember { mutableStateOf<TransactionModelUI?>(null) }
     var eventItem by remember { mutableStateOf<EventItem>(EventItem.ADD) }
 
     val scaffoldState = rememberBottomSheetScaffoldState(
@@ -143,7 +141,7 @@ fun ScaffoldWallet(
                         if (event == EventItem.BOOKMARK) {
                             onClickEventItem(item, event)
                         } else {
-                            transactionSelected = item
+                            onClickSelectTransaction(item)
                             eventItem = event
                         }
                     },
@@ -187,7 +185,7 @@ fun ScaffoldWallet(
                         containerColor = Color.White,
                         contentColor = Color.Black,
                         onClick = {
-                            transactionSelected = TransactionModelUI()
+                            onClickSelectTransaction(TransactionModelUI())
                             eventItem = EventItem.ADD
                         },
                         elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 18.dp)
@@ -206,7 +204,7 @@ fun ScaffoldWallet(
                         containerColor = Color.White,
                         contentColor = Color.Black,
                         onClick = {
-                            transactionSelected = TransactionModelUI()
+                            onClickSelectTransaction(TransactionModelUI())
                             eventItem = EventItem.ADD
                         }) {
                         Icon(imageVector = Icons.Default.Add, contentDescription = "")
@@ -219,7 +217,7 @@ fun ScaffoldWallet(
                         EventItem.EDIT -> {
                             ModalBottomSheetWallet(
                                 onDismissRequest = {
-                                    transactionSelected = null
+                                    onClickSelectTransaction(null)
                                 },
                                 eventItem = eventItem,
                                 maxBottomBardHeight = maxModalBottomBardHeight,
@@ -228,7 +226,6 @@ fun ScaffoldWallet(
                                 item = transactionSelected,
                                 onClickEvent = { item ->
                                     onClickEventItem(item, eventItem)
-                                    transactionSelected = null
                                 },
                                 onClickAddCategory = {
                                     showAddCategory = true
@@ -238,10 +235,9 @@ fun ScaffoldWallet(
 
                         EventItem.DELETE -> {
                             DialogDeleteTransaction(
-                                onDismissRequest = { transactionSelected = null },
+                                onDismissRequest = { onClickSelectTransaction(null) },
                                 onClickAccept = {
                                     onClickEventItem(transactionSelected!!, EventItem.DELETE)
-                                    transactionSelected = null
                                 }
                             )
                         }

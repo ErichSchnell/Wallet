@@ -62,6 +62,8 @@ fun HomeScreen(
                     }
                 },
 
+                transactionSelected = uiState.transactionSelected,
+                onClickSelectTransaction = {transaction -> homeViewModel.selectItemTransaction(transaction)},
                 transactionList = when (uiState.screens.id) {
                     Screens.INCOME.id ->  uiState.incomes.transactions
                     Screens.EXPENSES.id ->  uiState.expenses.transactions
